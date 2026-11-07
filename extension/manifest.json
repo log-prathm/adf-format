@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "ADF ChatGPT Capture",
+  "version": "1.0.0",
+  "description": "Save the visible ChatGPT conversation as a local Agentic Document Format file.",
+  "permissions": ["activeTab", "scripting"],
+  "action": { "default_title": "Capture ChatGPT to ADF", "default_popup": "popup.html" }
+}

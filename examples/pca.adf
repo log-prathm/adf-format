@@ -1,0 +1,21 @@
+{
+  "adf": "1.0",
+  "title": "PCA in two dimensions",
+  "description": "Rotate a projection axis, watch the projected variance change, then check your understanding.",
+  "source": { "kind": "agent" },
+  "blocks": [
+    { "type": "message", "role": "user", "blocks": [
+      { "type": "markdown", "text": "How does PCA choose a direction when it reduces 2D data to one dimension?" }
+    ] },
+    { "type": "message", "role": "assistant", "blocks": [
+      { "type": "markdown", "text": "PCA centers the data, then chooses the unit direction $u$ for which the projected scores have the largest variance. The slider below lets you try that choice yourself." },
+      { "type": "math", "tex": "z_i=u^\\top(x_i-\\bar{x}),\\qquad \\operatorname{Var}(z)=\\frac{1}{n}\\sum_{i=1}^{n} z_i^2" },
+      { "type": "projection", "title": "Project the centered data", "points": [[-4,-3],[-3,-1],[-2,-2],[-1,0],[1,0],[2,2],[3,1],[4,3]], "angle": 0 },
+      { "type": "details", "title": "Why do we center the data?", "blocks": [
+        { "type": "markdown", "text": "Centering sets $\\bar{x}$ as the origin. The mean of the projected scores is then zero, which is why the expression above uses squared scores directly." }
+      ] }
+    ] },
+    { "type": "quiz", "prompt": "Which direction does the first principal component choose?", "choices": ["The direction with the largest projected variance", "The direction with the smallest projected variance", "The horizontal axis for every dataset"], "answer": 0, "explanation": "The first principal component maximizes $u^\\top S u$ over all unit vectors $u$, where $S$ is the covariance matrix." },
+    { "type": "diagram", "title": "From data to scores", "nodes": [{ "id": "data", "label": "Center the data" }, { "id": "covariance", "label": "Find the top eigenvector" }, { "id": "scores", "label": "Project the rows" }], "edges": [{ "from": "data", "to": "covariance" }, { "from": "covariance", "to": "scores" }] }
+  ]
+}

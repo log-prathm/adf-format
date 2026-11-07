@@ -1,0 +1,31 @@
+<section class="workspace" aria-label="Open a document">
+  <div class="intro">
+    <p class="eyebrow">Offline document viewer</p>
+    <h1>Open an ADF document</h1>
+    <p>Read, convert, and share interactive documents. Files are processed on your device.</p>
+    <div class="action-row">
+      <label class="file-label">Choose a file<input id="file-input" type="file" accept=".adf,.json,.md,.markdown,.txt" aria-label="Choose an ADF, ChatGPT export, or Markdown file"></label>
+      <button type="button" id="open-sample" class="secondary">Try the PCA example</button>
+    </div>
+    <details class="import-options" id="paste-panel">
+      <summary>Paste Markdown or ADF JSON</summary>
+      <form id="paste-form" class="paste-form">
+        <label>Title for pasted Markdown <input id="paste-title" maxlength="180" placeholder="Pasted response"></label>
+        <label>Content <textarea id="paste-input" rows="5" required placeholder="Paste content here"></textarea></label>
+        <button type="submit">Open pasted content</button>
+      </form>
+    </details>
+    <div class="conversation-picker" id="conversation-picker" hidden>
+      <label for="conversation">Choose a ChatGPT conversation</label>
+      <select id="conversation"></select>
+    </div>
+    <div class="status-row"><p id="status" role="status">Supports .adf, ChatGPT conversation JSON, and Markdown.</p></div>
+    <div class="action-row document-actions" id="document-actions" hidden>
+      <button type="button" id="save-adf">Download .adf</button>
+      <button type="button" id="save-html" class="primary">Download offline HTML</button>
+      <button type="button" data-print>Print</button>
+    </div>
+    <noscript>Enable JavaScript in a browser to open files with this viewer.</noscript>
+  </div>
+</section>
+<main id="reader" class="reader"></main>

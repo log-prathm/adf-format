@@ -1,0 +1,458 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agentic Document Format 1.0",
+  "type": "object",
+  "properties": {
+    "adf": {
+      "const": "1.0"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1500
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "chatgpt-ui",
+            "chatgpt-export",
+            "markdown",
+            "agent"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^https://[^\\s]+$"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1500
+      },
+      "minItems": 0,
+      "maxItems": 80
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/block"
+      },
+      "minItems": 1,
+      "maxItems": 2000
+    }
+  },
+  "required": [
+    "adf",
+    "title",
+    "blocks"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "block": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/markdown"
+        },
+        {
+          "$ref": "#/$defs/math"
+        },
+        {
+          "$ref": "#/$defs/message"
+        },
+        {
+          "$ref": "#/$defs/details"
+        },
+        {
+          "$ref": "#/$defs/quiz"
+        },
+        {
+          "$ref": "#/$defs/plot"
+        },
+        {
+          "$ref": "#/$defs/projection"
+        },
+        {
+          "$ref": "#/$defs/diagram"
+        },
+        {
+          "$ref": "#/$defs/image"
+        },
+        {
+          "$ref": "#/$defs/fallback"
+        }
+      ]
+    },
+    "markdown": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "markdown"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400000
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "math": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "math"
+        },
+        "tex": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        }
+      },
+      "required": [
+        "type",
+        "tex"
+      ],
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "message"
+        },
+        "role": {
+          "enum": [
+            "user",
+            "assistant"
+          ]
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          },
+          "minItems": 1,
+          "maxItems": 2000
+        }
+      },
+      "required": [
+        "type",
+        "role",
+        "blocks"
+      ],
+      "additionalProperties": false
+    },
+    "details": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "details"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          },
+          "minItems": 1,
+          "maxItems": 2000
+        },
+        "open": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "blocks"
+      ],
+      "additionalProperties": false
+    },
+    "quiz": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "quiz"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "minItems": 2,
+          "maxItems": 12
+        },
+        "answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400000
+        }
+      },
+      "required": [
+        "type",
+        "prompt",
+        "choices",
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "plot": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "plot"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -1000000000.0,
+              "maximum": 1000000000.0
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 1,
+          "maxItems": 2000
+        },
+        "mode": {
+          "enum": [
+            "scatter",
+            "line"
+          ]
+        },
+        "xLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "yLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "points"
+      ],
+      "additionalProperties": false
+    },
+    "projection": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "projection"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -1000000000.0,
+              "maximum": 1000000000.0
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 2,
+          "maxItems": 500
+        },
+        "angle": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "points"
+      ],
+      "additionalProperties": false
+    },
+    "diagram": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "diagram"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 40
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 65
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "nodes",
+        "edges"
+      ],
+      "additionalProperties": false
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000000,
+          "pattern": "^data:image/(?:png|jpeg|gif|webp|avif);base64,[A-Za-z0-9+/]+={0,2}$"
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 400
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        }
+      },
+      "required": [
+        "type",
+        "src",
+        "alt"
+      ],
+      "additionalProperties": false
+    },
+    "fallback": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "fallback"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400000
+        }
+      },
+      "required": [
+        "type",
+        "label",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
