@@ -16,7 +16,7 @@ function save(name, content, mime) {
   setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
 
-function enhance(root) {
+export function enhance(root) {
   for (const card of root.querySelectorAll('.quiz')) {
     const buttons = Array.from(card.querySelectorAll('[data-choice]'));
     for (const button of buttons) {
@@ -72,7 +72,7 @@ function enhance(root) {
   }
 }
 
-function startViewer() {
+export function startViewer(display) {
   const $ = id => document.getElementById(id);
   const fileInput = $('file-input');
   const reader = $('reader');
@@ -91,8 +91,11 @@ function startViewer() {
 
   function show(next, message) {
     const html = documentHTML(next);
-    reader.innerHTML = html;
-    enhance(reader);
+    if (display) display(html, next.title);
+    else {
+      reader.innerHTML = html;
+      enhance(reader);
+    }
     current = next;
     $('document-actions').hidden = false;
     report(message);
@@ -188,4 +191,4 @@ document.addEventListener('click', event => {
   if (event.target.closest('[data-print]')) window.print();
 });
 if (document.body.dataset.mode === 'portable') enhance(document.getElementById('reader'));
-else startViewer();
+else if (document.body.dataset.mode === 'viewer') startViewer();

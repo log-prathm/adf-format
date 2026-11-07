@@ -1,0 +1,40 @@
+<div class="paper-toolbar" aria-label="Page reader controls">
+  <div class="paper-tools">
+    <button type="button" id="paper-sidebar-toggle" aria-controls="paper-sidebar" aria-expanded="false" disabled>Outline</button>
+    <button type="button" id="paper-file">Open file</button>
+    <span class="paper-title" id="paper-title">Page reader</span>
+    <form id="paper-jump" class="paper-jump" aria-label="Jump to page">
+      <button type="button" id="paper-prev" aria-label="Previous page" disabled>‹</button>
+      <input id="paper-number" aria-label="Page number" type="text" inputmode="numeric" pattern="[0-9]+" value="1" disabled>
+      <span id="paper-total">/ 0</span>
+      <button type="button" id="paper-next" aria-label="Next page" disabled>›</button>
+    </form>
+    <button type="button" id="paper-find" aria-controls="paper-sidebar" disabled>Find</button>
+  </div>
+</div>
+<details class="paper-files" id="paper-files" open>
+  <summary>Import, export, and print</summary>
+  <!-- importer -->
+</details>
+<div class="paper-layout" id="paper-layout" hidden>
+  <aside class="paper-sidebar" id="paper-sidebar" aria-label="Document navigation" hidden>
+    <div class="paper-sidebar-tools">
+      <div class="paper-tabs" aria-label="Navigation views">
+        <button type="button" id="paper-outline-tab" aria-controls="paper-outline" aria-pressed="true">Outline</button>
+        <button type="button" id="paper-thumbs-tab" aria-controls="paper-thumbs" aria-pressed="false">Pages</button>
+      </div>
+      <button type="button" id="paper-sidebar-close" class="paper-close" aria-label="Close navigation">×</button>
+    </div>
+    <form id="paper-search" class="paper-search" role="search">
+      <input id="paper-query" type="search" aria-label="Search document" placeholder="Search document">
+      <button type="submit">Go</button>
+    </form>
+    <nav id="paper-outline" aria-label="Document outline"><ol></ol></nav>
+    <nav id="paper-thumbs" aria-label="Page thumbnails" hidden><ol></ol></nav>
+    <section id="paper-results" aria-label="Search results" hidden>
+      <p id="paper-match-count" role="status"></p>
+      <ol></ol>
+    </section>
+  </aside>
+  <main class="paper-stage" id="reader" aria-label="Document pages"></main>
+</div>

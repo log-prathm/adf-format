@@ -135,3 +135,75 @@ test('downloaded ADF round-trips and standalone HTML has readable static content
     await context.close();
   }
 });
+
+const pagedViewer = new URL('../docs/reader.html', import.meta.url).href;
+
+test('page reader jumps by number, outline and thumbnail, and searches detached pages', async () => {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, offline: true });
+  try {
+    const page = await context.newPage();
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(viewer);
+    await page.getByRole('link', { name: 'Open page reader' }).click();
+    assert.equal(page.url(), pagedViewer);
+    await page.getByText('Create an .adf with your AI agent').waitFor();
+    const text = Array.from({ length: 24 }, (_, index) =>
+      `## Chapter ${index + 1}\n\n${('A reading passage with enough text to take several lines. ').repeat(26)}`
+      + (index === 23 ? ' Unique atlas landmark.' : '')).join('\n\n');
+    await page.locator('#file-input').setInputFiles({
+      name: 'chapters.adf', mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ adf: '1.0', title: 'Practice handbook', blocks: [{ type: 'markdown', text }] })),
+    });
+    await page.getByRole('heading', { name: 'Practice handbook' }).waitFor();
+    const number = page.getByRole('textbox', { name: 'Page number' });
+    const count = await page.locator('.paper-sheet').count();
+    assert.ok(count >= 6);
+    assert.equal(await page.getByText('Unique atlas landmark.', { exact: false }).count(), 0);
+    await number.fill('3');
+    await number.press('Enter');
+    assert.equal(await number.inputValue(), '3');
+    await page.getByRole('button', { name: 'Chapter 1 1', exact: true }).click();
+    assert.equal(await number.inputValue(), '1');
+    await page.getByRole('button', { name: 'Pages', exact: true }).click();
+    await page.getByRole('button', { name: 'Go to page 2', exact: true }).click();
+    assert.equal(await number.inputValue(), '2');
+    await page.keyboard.press('Control+f');
+    const search = page.getByRole('searchbox', { name: 'Search document' });
+    await search.fill('unique atlas landmark');
+    await search.press('Enter');
+    await page.getByRole('button', { name: /Unique atlas landmark/ }).click();
+    assert.equal(await number.inputValue(), String(count));
+    assert.match(await page.locator('.paper-unit.is-match').textContent(), /Unique atlas landmark/);
+    assert.deepEqual(errors, []);
+  } finally {
+    await context.close();
+  }
+});
+
+test('mobile page reader preserves page assignment and widget state on interaction', async () => {
+  const context = await browser.newContext({ ...devices['Pixel 7'], offline: true });
+  try {
+    const page = await context.newPage();
+    await page.goto(pagedViewer);
+    await page.getByRole('button', { name: 'Try the PCA example' }).click();
+    const projection = page.getByRole('slider', { name: 'Rotate projection axis' });
+    const count = await page.locator('.paper-sheet').count();
+    const quiz = page.getByRole('button', { name: 'The direction with the largest projected variance' });
+    const initial = await page.locator('#paper-total').textContent();
+    await projection.fill('67');
+    await quiz.click();
+    assert.equal(await page.locator('.quiz-result').textContent(), 'Correct.');
+    assert.equal(await page.locator('#paper-total').textContent(), initial);
+    assert.equal(await page.locator('.paper-sheet').count(), count);
+    await page.getByRole('button', { name: 'Find', exact: true }).click();
+    await page.getByRole('searchbox', { name: 'Search document' }).fill('Project the centered data');
+    await page.getByRole('searchbox', { name: 'Search document' }).press('Enter');
+    await page.getByRole('button', { name: /Project the centered data/ }).click();
+    assert.equal(await page.locator('#paper-sidebar').isVisible(), false);
+    assert.equal(await projection.inputValue(), '67');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  } finally {
+    await context.close();
+  }
+});

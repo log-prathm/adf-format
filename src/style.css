@@ -134,3 +134,4 @@ img { max-width:100%; height:auto; }
   .visual-card, .reveal, pre { break-inside:avoid; }
   a { color:inherit; }
 }
+.view-switch { display:inline-flex; align-items:center; min-height:42px; padding:.45rem .7rem; font-weight:650; }
