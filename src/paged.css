@@ -83,6 +83,49 @@ body[data-mode=paged] {
   .paper-unit .turn-user { max-width:100%; }
   #paper-number { width:2.15rem; }
 }
+@media screen and (max-width: 600px) {
+  body[data-mode=paged] { --paper-phone-height:48rem; }
+  .paper-layout { width:calc(100% - .5rem); margin-top:.4rem; }
+  .paper-files { margin-top:.35rem; }
+  .paper-stage { gap:.4rem; text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+  .paper-sheet {
+    aspect-ratio:auto; min-width:0; min-height:0;
+    gap:.35rem; padding:.75rem .68rem .55rem;
+  }
+  .paper-measure .paper-sheet { height:var(--paper-phone-height); }
+  .paper-sheet-body { gap:.32rem; }
+  .paper-page-footer { padding-top:.23rem; font-size:.72rem; }
+  .paper-unit { font-size:.94rem; line-height:1.38; }
+  .paper-unit .document-heading { padding-bottom:.45rem; margin-bottom:.12rem; }
+  .paper-unit .document-heading h1 { font-size:1.42rem; }
+  .paper-unit .document-description { margin:.33rem 0 0; font-size:.92rem; }
+  .paper-unit .eyebrow { margin-bottom:.27rem; }
+  .paper-unit .markdown h1 { font-size:1.3rem; }
+  .paper-unit .markdown h2 { font-size:1.16rem; }
+  .paper-unit .markdown h3 { font-size:1.03rem; }
+  .paper-unit .markdown p, .paper-unit .markdown ul, .paper-unit .markdown ol { margin-block:.27em; }
+  .paper-unit .markdown > :first-child { margin-top:0; }
+  .paper-unit .markdown > :last-child { margin-bottom:0; }
+  .paper-unit .markdown ul, .paper-unit .markdown ol { padding-inline-start:1.15rem; }
+  .paper-unit .markdown li + li { margin-top:.12rem; }
+  .paper-unit .markdown blockquote { padding:.05rem .52rem; }
+  .paper-unit .table-scroll, .paper-unit .diagram-scroll { margin-block:.3rem; }
+  .paper-unit table { font-size:.84rem; line-height:1.32; }
+  .paper-unit th, .paper-unit td { padding:.24rem .32rem; }
+  .paper-unit .display-math { padding:.1rem .12rem; }
+  .paper-unit .katex { display:inline-block; max-width:100%; overflow-x:auto; vertical-align:middle; }
+  .paper-unit .visual-card, .paper-unit .reveal, .paper-unit .fallback { padding:.48rem .58rem; }
+  .paper-unit .visual-card figcaption, .paper-unit .quiz-prompt { font-size:.97rem; margin-bottom:.3rem; }
+  .paper-unit .component-label { margin-bottom:.23rem; }
+  .paper-unit .choices { gap:.22rem; margin:.3rem 0; padding-inline-start:1.2rem; }
+  .paper-unit .choices button { min-height:40px; padding:.31rem .46rem; }
+  .paper-unit .quiz-result:empty { display:none; }
+  .paper-unit .reveal-body { padding-top:.38rem; }
+}
+@media screen and (max-width: 360px) {
+  #paper-total { min-width:1.7rem; }
+  .paper-tools button { padding-inline:.34rem; font-size:.8rem; }
+}
 @media print {
   [data-mode=paged] { --paper:#fff; }
   .paper-toolbar, .paper-files, .paper-sidebar, .paper-measure { display:none !important; }

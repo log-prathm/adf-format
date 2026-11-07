@@ -72,6 +72,7 @@ function paperReader() {
   const pageField = $('paper-number');
   const query = $('paper-query');
   const narrow = matchMedia('(max-width: 760px)');
+  const compact = matchMedia('(max-width: 600px)');
   let units = [];
   let pages = [];
   let pageIndex = 0;
@@ -88,11 +89,16 @@ function paperReader() {
     const content = document.createDocumentFragment();
     page.units.forEach(unit => content.append(unit.wrapper));
     page.body.append(content);
+    page.node.style.removeProperty('min-height');
     page.mounted = true;
   }
 
   function unmount(page) {
     if (!page.mounted || page.node.contains(document.activeElement)) return;
+    if (compact.matches) {
+      // Preserve the scroll position even when a page grew to show an answer.
+      page.node.style.minHeight = `${page.node.getBoundingClientRect().height}px`;
+    }
     page.body.replaceChildren();
     page.mounted = false;
   }
@@ -216,21 +222,24 @@ function paperReader() {
     const measure = sheet(1);
     probe.append(measure.node);
 
-    // Measure the expanded state once. Controls can then change inside a page
-    // without assigning any content to a different page.
+    // Desktop sheets reserve room for expanded controls. Phone sheets grow
+    // in place when an answer or a disclosure is opened.
     const collapsed = [];
     for (const unit of units) {
       unit.wrapper.classList.remove('is-oversize');
       unit.wrapper.removeAttribute('tabindex');
-      for (const detail of unit.wrapper.querySelectorAll('details:not([open])')) {
-        collapsed.push(detail);
-        detail.open = true;
+      if (!compact.matches) {
+        for (const detail of unit.wrapper.querySelectorAll('details:not([open])')) {
+          collapsed.push(detail);
+          detail.open = true;
+        }
       }
       measure.body.append(unit.wrapper);
     }
     stage.append(probe);
     layoutWidth = stage.clientWidth;
-    const capacity = measure.body.clientHeight;
+    const capacity = measure.body.getBoundingClientRect().height;
+    const pageChrome = measure.node.getBoundingClientRect().height - capacity;
     const gap = Number.parseFloat(getComputedStyle(measure.body).rowGap);
     const heights = units.map(unit => unit.wrapper.getBoundingClientRect().height);
     probe.remove();
@@ -248,19 +257,34 @@ function paperReader() {
         groups.push([]);
         used = 0;
       }
-      if (heights[i] > capacity) {
+      if (!compact.matches && heights[i] > capacity) {
         unit.wrapper.classList.add('is-oversize');
         unit.wrapper.tabIndex = 0;
       }
-      unit.page = groups.length - 1;
+      unit.height = heights[i];
+      unit.keepWithNext = attached;
       groups.at(-1).push(unit);
       used += (used ? gap : 0) + height;
     });
 
+    if (compact.matches) {
+      // An oversized block can take its heading with it on a flexible phone page.
+      for (let i = 0; i + 1 < groups.length; i++) {
+        if (groups[i].at(-1)?.keepWithNext && !groups[i + 1][0].keepWithNext) {
+          groups[i + 1].unshift(groups[i].pop());
+        }
+      }
+    }
+
     const fragment = document.createDocumentFragment();
-    pages = groups.map((group, index) => {
+    pages = groups.filter(group => group.length).map((group, index) => {
+      group.forEach(unit => { unit.page = index; });
       const page = { ...sheet(index + 1), units: group, index };
       page.node.dataset.page = String(index);
+      if (compact.matches) {
+        const contentHeight = group.reduce((sum, unit) => sum + unit.height, 0);
+        page.node.style.minHeight = `${pageChrome + contentHeight + gap * (group.length - 1)}px`;
+      }
       fragment.append(page.node);
       return page;
     });

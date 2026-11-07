@@ -207,3 +207,50 @@ test('mobile page reader preserves page assignment and widget state on interacti
     await context.close();
   }
 });
+
+test('compact phone pages pack closed quizzes and contain wide inline math', async () => {
+  const context = await browser.newContext({
+    ...devices['Pixel 7'], viewport: { width: 320, height: 640 }, offline: true,
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto(pagedViewer);
+    const explanation = 'A worked solution that explains the reasoning. '.repeat(19);
+    const quiz = index => ({
+      type: 'quiz', prompt: `Revision question ${index}`,
+      choices: ['First choice', 'Second choice', 'Third choice', 'Fourth choice'],
+      answer: 0, explanation,
+    });
+    const blocks = [
+      { type: 'markdown', text: `Inline equation $x=${'1234567890+'.repeat(14)}0$ for review.` },
+      ...Array.from({ length: 10 }, (_, index) => quiz(index + 1)),
+      { type: 'markdown', text: `## Final review\n\n${'A long revision passage with several lines of text. '.repeat(75)}` },
+    ];
+    await page.locator('#file-input').setInputFiles({
+      name: 'revision.adf', mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ adf: '1.0', title: 'Compact revision', blocks })),
+    });
+    const first = page.locator('.paper-sheet').first();
+    await first.getByText('Revision question 1', { exact: true }).waitFor();
+    const pageCount = await page.locator('.paper-sheet').count();
+    assert.ok(pageCount <= 6);
+    assert.ok(await first.locator('.quiz').count() >= 2);
+    assert.equal(await page.evaluate(() => {
+      const { clientWidth, scrollWidth } = document.documentElement;
+      return clientWidth === 320 && scrollWidth === clientWidth;
+    }), true);
+
+    const height = (await first.boundingBox()).height;
+    const firstQuiz = first.locator('.quiz').first();
+    await firstQuiz.getByRole('button', { name: 'First choice' }).click();
+    assert.equal(await firstQuiz.locator('.quiz-result').textContent(), 'Correct.');
+    assert.ok((await first.boundingBox()).height > height);
+    assert.equal(await page.locator('.paper-sheet').count(), pageCount);
+    assert.equal(await firstQuiz.locator('.quiz-explanation').evaluate(el => el.open), true);
+    await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
+    const final = page.getByRole('heading', { name: 'Final review' });
+    assert.match(await final.locator('xpath=ancestor::section[contains(@class,"paper-sheet")]').textContent(), /A long revision passage/);
+  } finally {
+    await context.close();
+  }
+});

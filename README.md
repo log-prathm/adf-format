@@ -16,7 +16,7 @@ Choose **Open page reader** from the viewer, or open [docs/reader.html](docs/rea
 - **Open file** or **Try the PCA example** to start. Use the arrows or type a page number and press Enter.
 - **Outline** lists headings. Switch to **Pages** to jump by thumbnail.
 - **Find** searches the whole document, including pages outside the current view. You can also use Ctrl+F or Command+F.
-- Quizzes, plots, and collapsible sections work inline. Page numbers stay stable as you interact. Pages reflow when the reading width changes, so page counts can differ by device. An individual block taller than a page can be scrolled within its page.
+- Quizzes, plots, and collapsible sections work inline. Page numbers stay stable as you interact. Pages reflow when the reading width changes, so page counts can differ by device. Phone pages use tighter spacing and expand in place for long blocks or revealed answers. On desktop, a block taller than a page can be scrolled within its page.
 
 The two readers use the same ADF files and keep file processing in the browser. **Import, export, and print** includes the existing agent prompt, JSON paste, and download tools.
 
