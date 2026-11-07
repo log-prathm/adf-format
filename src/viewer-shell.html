@@ -7,6 +7,26 @@
       <label class="file-label">Choose a file<input id="file-input" type="file" accept=".adf,.json,.md,.markdown,.txt" aria-label="Choose an ADF, ChatGPT export, or Markdown file"></label>
       <button type="button" id="open-sample" class="secondary">Try the PCA example</button>
     </div>
+    <details class="import-options agent-help" id="agent-help">
+      <summary>Create an .adf with your AI agent</summary>
+      <ol>
+        <li>Copy the prompt below into the chat you want to turn into a document, or give your agent the material to use.</li>
+        <li>Download the <code>.adf</code> file it creates, then open it here with <strong>Choose a file</strong>.</li>
+        <li>If your agent returns JSON as text, paste the JSON into <strong>Paste Markdown or ADF JSON</strong>. Open it and select <strong>Download .adf</strong> to save the file.</li>
+      </ol>
+      <pre><code data-copy-label="Copy agent prompt">Turn this conversation or the material I provide into a standalone Agentic Document Format (ADF) 1.0 document. Save it as a downloadable notes.adf file.
+
+Use the ADF 1.0 schema for supported fields and block types.
+https://raw.githubusercontent.com/log-prathm/adf-format/main/schema/adf-1.0.schema.json
+
+Write UTF-8 JSON using this structure and replace the sample content.
+{"adf":"1.0","title":"My notes","blocks":[{"type":"markdown","text":"Your content here."}]}
+
+Preserve key explanations and equations. Use native ADF blocks for math, quizzes, plots, or diagrams where they help. Validate against the schema if you can.
+
+If you cannot create a file, return only the raw JSON without code fences or extra commentary.</code></pre>
+      <p>For more detail, share the <a href="https://github.com/log-prathm/adf-format/blob/main/SKILL.md">ADF authoring guide</a> with your agent.</p>
+    </details>
     <details class="import-options" id="paste-panel">
       <summary>Paste Markdown or ADF JSON</summary>
       <form id="paste-form" class="paste-form">

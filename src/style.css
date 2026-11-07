@@ -42,6 +42,10 @@ button:hover { border-color:var(--accent); }
 .secondary { background:var(--surface); }
 .import-options { margin-top:1rem; padding-top:.8rem; border-top:1px solid var(--line); }
 .import-options summary, .import-notes summary { cursor:pointer; color:var(--accent-strong); font-weight:650; }
+.agent-help ol { padding-inline-start:1.4rem; }
+.agent-help li + li { margin-top:.35rem; }
+.agent-help pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+.agent-help p { margin-bottom:0; }
 .paste-form { display:grid; gap:.65rem; padding-top:.7rem; }
 .paste-form label { display:grid; gap:.3rem; font-size:.88rem; font-weight:600; }
 .paste-form input, .paste-form textarea, select { width:100%; padding:.45rem .55rem; }

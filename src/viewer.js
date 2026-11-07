@@ -58,7 +58,7 @@ function enhance(root) {
     wrap.className = 'code-wrap';
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = 'Copy';
+    button.textContent = code.dataset.copyLabel || 'Copy';
     button.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(code.textContent);
@@ -82,6 +82,7 @@ function startViewer() {
   let current;
   let conversations = [];
   let loadSequence = 0;
+  enhance($('agent-help'));
 
   function report(message, error = false) {
     status.textContent = message;
